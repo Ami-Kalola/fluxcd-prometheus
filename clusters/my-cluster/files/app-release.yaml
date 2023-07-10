@@ -1,0 +1,156 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: app-release
+  namespace: demo
+spec:
+  chart:
+    spec:
+      chart: polymorphic-app
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: app-repo
+      version: 1.2.1
+  interval: 1m0s
+  values:
+    command: php artisan migrate && php artisan serve --host 0.0.0.0
+    cronJobTemplate:
+      annotations: {}
+      env: []
+      envFrom: []
+      image:
+        repository: null
+        tag: null
+      name: cronjob
+      securityContext: {}
+      suspend: true
+      volumeMounts: []
+      volumes: []
+    cronJobs: null
+    env: []
+    envFrom: []
+    fullnameOverride: ""
+    image:
+      pullPolicy: IfNotPresent
+      repository: amikalola123/php-apache
+      tag: latest
+    imagePullSecrets: []
+    jobTemplate:
+      annotations: []
+      command: null
+      env: []
+      envFrom: []
+      image:
+        repository: null
+        tag: null
+      name: job
+      securityContext: {}
+      volumeMounts: []
+      volumes: []
+    jobs: null
+    nameOverride: ""
+    serviceTemplate:
+      affinity: {}
+      annotations: {}
+      autoscaling: false
+      command: php artisan migrate && php artisan serve --host 0.0.0.0
+      env: []
+      envFrom: []
+      image: null
+      ingress:
+        annotations: {}
+        enabled: false
+        hosts:
+        - host: app.example.com
+          paths: []
+        tls: []
+      initContainers: []
+      lifecycleHooks: {}
+      maxReplicaCount: 4
+      minReplicaCount: 4
+      name: laravel-app
+      nodeSelector: {}
+      ports:
+      - containerPort: 8000
+        name: http
+        protocol: TCP
+      resources: {}
+      securityContext: {}
+      service:
+        annotations: {}
+        enabled: true
+        ports:
+        - name: http
+          port: 8000
+          protocol: TCP
+          targetPort: http
+        type: NodePort
+      tolerations: []
+      volumeMounts: null
+      volumes: null
+    services:
+    - env:
+      - name: DB_CONNECTION
+        value: mysql
+      - name: DB_HOST
+        value: my-release-mysql.demo.svc.cluster.local
+      - name: DB_DATABASE
+        value: homestead
+      - name: DB_USERNAME
+        value: root
+      - name: DB_PASSWORD
+        value: secret
+      - name: DB_PORT
+        value: "3306"
+      healthcheck:
+        enabled: false
+        initialDelaySeconds: 30
+        path: /healthz
+        periodSeconds: 30
+        port: 8000
+        type: httpGet
+      name: laravel-app
+      ports:
+      - containerPort: 8000
+        name: http
+        protocol: TCP
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      service:
+        enabled: true
+        ports:
+        - name: http
+          port: 8000
+          protocol: TCP
+          targetPort: 8000
+        type: NodePort
+      type: Deployment
+    volumeMounts:
+    - mountPath: /var/www/html
+      name: my-volume
+    volumes:
+    - name: my-volume
+      persistentVolumeClaim:
+        claimName: my-pvc
+    workerTemplate:
+      affinity: {}
+      autoscaling: false
+      env: []
+      envFrom: []
+      image: null
+      maxReplicaCount: 1
+      minReplicaCount: 1
+      name: worker
+      nodeSelector: {}
+      resources: {}
+      secret:
+        enabled: false
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      tolerations: []
+      volumeMounts: []
+      volumes: []
+    workers: null

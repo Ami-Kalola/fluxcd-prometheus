@@ -1,0 +1,23 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: database-release
+  namespace: demo
+spec:
+  chart:
+    spec:
+      chart: mysql
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: db-repo
+      version: 9.10.4
+  interval: 1m0s
+  values:
+    auth:
+      createDatabase: true
+      database: homestead
+      password: secret
+      rootPassword: secret
+      username: homestead

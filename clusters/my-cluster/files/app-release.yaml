@@ -67,8 +67,8 @@ spec:
         tls: []
       initContainers: []
       lifecycleHooks: {}
-      maxReplicaCount: 4
-      minReplicaCount: 4
+      maxReplicaCount: 1
+      minReplicaCount: 1
       name: laravel-app
       nodeSelector: {}
       ports:
